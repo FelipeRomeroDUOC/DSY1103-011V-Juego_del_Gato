@@ -1,11 +1,10 @@
-package cl.feliperomero.dominio;
+package cl.feliperomero.servicio;
 
+import cl.feliperomero.dominio.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-
-import cl.feliperomero.servicio.GestorPartida;
 
 class GestorPartidaTest {
 
