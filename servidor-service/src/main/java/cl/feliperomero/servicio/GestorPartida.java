@@ -1,7 +1,7 @@
 package cl.feliperomero.servicio;
 
 import cl.feliperomero.dominio.*;
-import lombok.Data;
+import lombok.Getter;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.ArrayList;
 
-@Data
+@Getter
 @Service
 public class GestorPartida {
     
@@ -24,20 +24,22 @@ public class GestorPartida {
     private List<Jugador> jugadores = new ArrayList<>();
 
     public boolean unirJugador(Jugador nuevoJugador, Integer limiteTiempo){
-        if (jugadores.isEmpty()){
-            jugadores.add(nuevoJugador);
-            this.tiempoCreacion = LocalDateTime.now();
-            this.segundosPorTurno = limiteTiempo;
-            return true;
-        }
-        if(jugadores.size() == 1){
-            jugadores.add(nuevoJugador);
-            if (this.segundosPorTurno == null){
-                iniciarPartida(TipoPartida.SIN_TIEMPO);
-            } else {
-                iniciarPartida(TipoPartida.CON_TIEMPO);
+        if (this.estadoActual == EstadoPartida.ESPERANDO) {
+            if (jugadores.isEmpty()){
+                jugadores.add(nuevoJugador);
+                this.tiempoCreacion = LocalDateTime.now();
+                this.segundosPorTurno = limiteTiempo;
+                return true;
             }
-            return true;
+            if(jugadores.size() == 1){
+                jugadores.add(nuevoJugador);
+                if (this.segundosPorTurno == null){
+                    iniciarPartida(TipoPartida.SIN_TIEMPO);
+                } else {
+                    iniciarPartida(TipoPartida.CON_TIEMPO);
+                }
+                return true;
+            }
         }
         return false;
     }
@@ -65,25 +67,33 @@ public class GestorPartida {
         this.tiempoUltimaJugada = LocalDateTime.now();
     }
 
-    public void terminarPartida(ResultadoPartida resultado){
-        this.resultadoPartida = resultado;
-        this.estadoActual = EstadoPartida.TERMINADA;
-    }
-
-    public void tiempoAgotado(){
-        if (tipoPartidaActual == TipoPartida.CON_TIEMPO){
-            this.terminarPartida(ResultadoPartida.TIMEOUT);
+    public ResultadoPartida terminarPartida(ResultadoPartida resultado){
+        if (this.estadoActual == EstadoPartida.EN_PROGRESO ) {
+            this.resultadoPartida = resultado;
+            this.estadoActual = EstadoPartida.TERMINADA;
+            return this.resultadoPartida;
         }
+        return null;
     }
 
-    public void revisarYAplicarTimeout(){
+    public ResultadoPartida tiempoAgotado(){
+        if (this.estadoActual == EstadoPartida.EN_PROGRESO) {
+            this.resultadoPartida = ResultadoPartida.TIMEOUT;
+            this.estadoActual = EstadoPartida.TERMINADA;
+            return this.resultadoPartida;
+        }
+        return null;
+    }
+
+    public boolean revisarYAplicarTimeout(){
         if (this.tipoPartidaActual == TipoPartida.CON_TIEMPO) {
-            
             if (obtenerTiempoRestante() == 0) {
                 tiempoAgotado();
-                return;
+                return true;
             }
+            return false;
         }
+        return false;
     }
 
     private Integer tiempoRestante = 0;
@@ -115,10 +125,11 @@ public class GestorPartida {
         return ficha;
     }
     
-    public void recibirJugada(String casilla, TableroGato.TipoFicha ficha){
+    public void recibirJugada(TableroGato.Casilla casilla, TableroGato.TipoFicha ficha){
 
         this.revisarYAplicarTimeout();
-        if (this.estadoActual == EstadoPartida.TERMINADA){
+        
+        if (this.estadoActual != EstadoPartida.EN_PROGRESO){
             return;
         }
 

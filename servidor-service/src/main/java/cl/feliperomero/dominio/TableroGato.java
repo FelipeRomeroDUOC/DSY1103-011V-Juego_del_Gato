@@ -8,42 +8,86 @@ import java.util.HashMap;
 @Getter
 @AllArgsConstructor
 public class TableroGato {
+    
     public enum TipoFicha {
         X, O, VACIA
     }
 
-    private Map<String, TipoFicha> tablero;
+     public enum Casilla{
+        C1("1"),
+        C2("2"),
+        C3("3"),
+        C4("4"),
+        C5("5"),
+        C6("6"),
+        C7("7"),
+        C8("8"),
+        C9("9");
+        
+        private final String idStr;
 
-    public final String[][] combinacionesGanadoras = {
-        {"1", "2", "3"}, // Fila superior
-        {"4", "5", "6"}, // Fila central
-        {"7", "8", "9"}, // Fila inferior
-        {"1", "4", "7"}, // Columna izquierda
-        {"2", "5", "8"}, // Columna central
-        {"3", "6", "9"}, // Columna derecha
-        {"1", "5", "9"}, // Diagonal principal
-        {"3", "5", "7"}  // Diagonal secundaria
+        Casilla(String idStr){
+            this.idStr = idStr;
+        }
+
+        public String getIdStr(){
+            return idStr;
+        }
+    }
+
+    private Map<Casilla, TipoFicha> tablero;
+
+    private enum CombinacionesGanadoras{
+        FILA_SUPERIOR(Casilla.C1, Casilla.C2, Casilla.C3),
+        FILA_CENTRAL(Casilla.C4, Casilla.C5, Casilla.C6),
+        FILA_INFERIOR(Casilla.C7, Casilla.C8, Casilla.C9),
+        COLUMNA_IZQUIERDA(Casilla.C1, Casilla.C4, Casilla.C7),
+        COLUMNA_CENTRAL(Casilla.C2, Casilla.C5, Casilla.C8),
+        COLUMNA_DERECHA(Casilla.C3, Casilla.C6, Casilla.C9),
+        DIAGONAL_PRINCIPAL(Casilla.C1, Casilla.C5, Casilla.C9),
+        DIAGONAL_SECUNDARIA(Casilla.C3, Casilla.C5, Casilla.C7);
+
+        private final Casilla c1;
+        private final Casilla c2;
+        private final Casilla c3;
+
+        CombinacionesGanadoras(Casilla c1, Casilla c2, Casilla c3){
+            this.c1 = c1;
+            this.c2 = c2;
+            this.c3 = c3;
+        }
+
+        public Casilla getC1(){
+            return c1;
+        }
+        public Casilla getC2(){
+            return c2;
+        }
+        public Casilla getC3(){
+            return c3;
+        }
     };
+
+
+    private void crearTablero(){
+        this.tablero = new HashMap<>();
+
+        this.tablero.put(Casilla.C1, TipoFicha.VACIA);
+        this.tablero.put(Casilla.C2, TipoFicha.VACIA);
+        this.tablero.put(Casilla.C3, TipoFicha.VACIA);
+        this.tablero.put(Casilla.C4, TipoFicha.VACIA);
+        this.tablero.put(Casilla.C5, TipoFicha.VACIA);
+        this.tablero.put(Casilla.C6, TipoFicha.VACIA);
+        this.tablero.put(Casilla.C7, TipoFicha.VACIA);
+        this.tablero.put(Casilla.C8, TipoFicha.VACIA);
+        this.tablero.put(Casilla.C9, TipoFicha.VACIA);
+    }
 
     public TableroGato() {
         this.crearTablero();
     }
 
-    private void crearTablero(){
-        this.tablero = new HashMap<>();
-
-        this.tablero.put("1", TipoFicha.VACIA);
-        this.tablero.put("2", TipoFicha.VACIA);
-        this.tablero.put("3", TipoFicha.VACIA);
-        this.tablero.put("4", TipoFicha.VACIA);
-        this.tablero.put("5", TipoFicha.VACIA);
-        this.tablero.put("6", TipoFicha.VACIA);
-        this.tablero.put("7", TipoFicha.VACIA);
-        this.tablero.put("8", TipoFicha.VACIA);
-        this.tablero.put("9", TipoFicha.VACIA);
-    }
-
-    public boolean ponerFicha(String casilla, TipoFicha ficha){
+    public boolean ponerFicha(Casilla casilla, TipoFicha ficha){
         if(this.tablero.get(casilla) == TipoFicha.VACIA){
             this.tablero.put(casilla, ficha);
             return true;
@@ -52,10 +96,10 @@ public class TableroGato {
     }
 
     public TipoFicha verificarGanador(){
-        for(String[] combinacion: combinacionesGanadoras){
-            String primeraCasilla = combinacion[0];
-            String segundaCasilla = combinacion[1];
-            String terceraCasilla = combinacion[2];
+        for(CombinacionesGanadoras combinacion : CombinacionesGanadoras.values()){
+            Casilla primeraCasilla = combinacion.getC1();
+            Casilla segundaCasilla = combinacion.getC2();
+            Casilla terceraCasilla = combinacion.getC3();
 
             if(this.tablero.get(primeraCasilla) != TipoFicha.VACIA &&
             this.tablero.get(primeraCasilla) == 
@@ -80,14 +124,14 @@ public class TableroGato {
     @Override
     public String toString() {
         return "\n" +
-               " " + formatearFicha("1") + " | " + formatearFicha("2") + " | " + formatearFicha("3") + " \n" +
+               " " + formatearFicha(Casilla.C1) + " | " + formatearFicha(Casilla.C2) + " | " + formatearFicha(Casilla.C3) + " \n" +
                "---+---+---\n" +
-               " " + formatearFicha("4") + " | " + formatearFicha("5") + " | " + formatearFicha("6") + " \n" +
+               " " + formatearFicha(Casilla.C4) + " | " + formatearFicha(Casilla.C5) + " | " + formatearFicha(Casilla.C6) + " \n" +
                "---+---+---\n" +
-               " " + formatearFicha("7") + " | " + formatearFicha("8") + " | " + formatearFicha("9") + " \n";
+               " " + formatearFicha(Casilla.C7) + " | " + formatearFicha(Casilla.C8) + " | " + formatearFicha(Casilla.C9) + " \n";
     }
 
-    private String formatearFicha(String casilla) {
+    private String formatearFicha(Casilla casilla) {
         TipoFicha ficha = this.tablero.get(casilla);
         if (ficha == TipoFicha.VACIA) {
             return " ";

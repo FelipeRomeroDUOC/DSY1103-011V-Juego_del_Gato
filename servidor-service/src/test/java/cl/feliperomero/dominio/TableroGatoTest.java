@@ -21,7 +21,7 @@ class TableroGatoTest {
 
         // When (Cuando)
         boolean estaLleno = tablero.estaLleno();
-        TableroGato.TipoFicha fichaEnCasilla1 = tablero.getTablero().get("1");
+        TableroGato.TipoFicha fichaEnCasilla1 = tablero.getTablero().get(TableroGato.Casilla.C1);
 
         // Then (Entonces)
         assertFalse(estaLleno);
@@ -31,7 +31,7 @@ class TableroGatoTest {
     @Test
     void deberiaPonerFichaExitosamente() {
         // Given (Dado)
-        String casilla = "5";
+        TableroGato.Casilla casilla = TableroGato.Casilla.C5;
         TableroGato.TipoFicha ficha = TableroGato.TipoFicha.X;
 
         // When (Cuando)
@@ -46,7 +46,7 @@ class TableroGatoTest {
     @Test
     void noDeberiaPonerFichaEnCasillaOcupada() {
         // Given (Dado)
-        String casilla = "1";
+        TableroGato.Casilla casilla = TableroGato.Casilla.C1;
         tablero.ponerFicha(casilla, TableroGato.TipoFicha.X); // Ocupamos la casilla
 
         // When (Cuando)
@@ -62,9 +62,9 @@ class TableroGatoTest {
     @Test
     void deberiaDetectarVictoriaHorizontal() {
         // Given (Dado)
-        tablero.ponerFicha("4", TableroGato.TipoFicha.X);
-        tablero.ponerFicha("5", TableroGato.TipoFicha.X);
-        tablero.ponerFicha("6", TableroGato.TipoFicha.X);
+        tablero.ponerFicha(TableroGato.Casilla.C4, TableroGato.TipoFicha.X);
+        tablero.ponerFicha(TableroGato.Casilla.C5, TableroGato.TipoFicha.X);
+        tablero.ponerFicha(TableroGato.Casilla.C6, TableroGato.TipoFicha.X);
 
         // When (Cuando)
         TableroGato.TipoFicha ganador = tablero.verificarGanador();
@@ -76,9 +76,9 @@ class TableroGatoTest {
     @Test
     void deberiaDetectarVictoriaDiagonal() {
         // Given (Dado)
-        tablero.ponerFicha("3", TableroGato.TipoFicha.O);
-        tablero.ponerFicha("5", TableroGato.TipoFicha.O);
-        tablero.ponerFicha("7", TableroGato.TipoFicha.O);
+        tablero.ponerFicha(TableroGato.Casilla.C3, TableroGato.TipoFicha.O);
+        tablero.ponerFicha(TableroGato.Casilla.C5, TableroGato.TipoFicha.O);
+        tablero.ponerFicha(TableroGato.Casilla.C7, TableroGato.TipoFicha.O);
 
         // When (Cuando)
         TableroGato.TipoFicha ganador = tablero.verificarGanador();
@@ -90,8 +90,8 @@ class TableroGatoTest {
     @Test
     void deberiaRetornarVaciaSiNadieHaGanado() {
         // Given (Dado)
-        tablero.ponerFicha("1", TableroGato.TipoFicha.X);
-        tablero.ponerFicha("2", TableroGato.TipoFicha.O);
+        tablero.ponerFicha(TableroGato.Casilla.C1, TableroGato.TipoFicha.X);
+        tablero.ponerFicha(TableroGato.Casilla.C2, TableroGato.TipoFicha.O);
         
         // When (Cuando)
         TableroGato.TipoFicha ganador = tablero.verificarGanador();
@@ -103,15 +103,15 @@ class TableroGatoTest {
     @Test
     void deberiaDetectarEmpateCuandoEstaLleno() {
         // Given (Dado)
-        tablero.ponerFicha("1", TableroGato.TipoFicha.X);
-        tablero.ponerFicha("2", TableroGato.TipoFicha.O);
-        tablero.ponerFicha("3", TableroGato.TipoFicha.X);
-        tablero.ponerFicha("4", TableroGato.TipoFicha.X);
-        tablero.ponerFicha("5", TableroGato.TipoFicha.O);
-        tablero.ponerFicha("6", TableroGato.TipoFicha.O);
-        tablero.ponerFicha("7", TableroGato.TipoFicha.O);
-        tablero.ponerFicha("8", TableroGato.TipoFicha.X);
-        tablero.ponerFicha("9", TableroGato.TipoFicha.X);
+        tablero.ponerFicha(TableroGato.Casilla.C1, TableroGato.TipoFicha.X);
+        tablero.ponerFicha(TableroGato.Casilla.C2, TableroGato.TipoFicha.O);
+        tablero.ponerFicha(TableroGato.Casilla.C3, TableroGato.TipoFicha.X);
+        tablero.ponerFicha(TableroGato.Casilla.C4, TableroGato.TipoFicha.X);
+        tablero.ponerFicha(TableroGato.Casilla.C5, TableroGato.TipoFicha.O);
+        tablero.ponerFicha(TableroGato.Casilla.C6, TableroGato.TipoFicha.O);
+        tablero.ponerFicha(TableroGato.Casilla.C7, TableroGato.TipoFicha.O);
+        tablero.ponerFicha(TableroGato.Casilla.C8, TableroGato.TipoFicha.X);
+        tablero.ponerFicha(TableroGato.Casilla.C9, TableroGato.TipoFicha.X);
 
         // When (Cuando)
         boolean estaLleno = tablero.estaLleno();
