@@ -1,5 +1,6 @@
-package cl.feliperomero.dominio;
+package cl.feliperomero.servicio;
 
+import cl.feliperomero.dominio.*;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
@@ -77,14 +78,24 @@ public class GestorPartida {
 
     public void revisarYAplicarTimeout(){
         if (this.tipoPartidaActual == TipoPartida.CON_TIEMPO) {
-
-            Duration diferencia = Duration.between(this.tiempoUltimaJugada, LocalDateTime.now());
-
-            if (diferencia.getSeconds() > this.segundosPorTurno) {
+            
+            if (obtenerTiempoRestante() == 0) {
                 tiempoAgotado();
                 return;
             }
         }
+    }
+
+    private Integer tiempoRestante = 0;
+    public Integer obtenerTiempoRestante(){
+        if (this.tipoPartidaActual == TipoPartida.CON_TIEMPO) {
+            Duration diferencia = Duration.between(this.tiempoUltimaJugada, LocalDateTime.now());
+            this.tiempoRestante = this.segundosPorTurno - (int) diferencia.getSeconds();
+            if(this.tiempoRestante < 0){
+                this.tiempoRestante = 0;
+            }
+        }
+        return this.tiempoRestante;
     }
 
     private boolean verificarTurno(TableroGato.TipoFicha fichaRecibida){

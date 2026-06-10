@@ -5,6 +5,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import cl.feliperomero.servicio.GestorPartida;
+
 class GestorPartidaTest {
 
     private GestorPartida gestor;
@@ -159,5 +161,32 @@ class GestorPartidaTest {
         // La partida debería cerrarse sin que nadie haya mandado una jugada
         assertEquals(GestorPartida.ResultadoPartida.TIMEOUT, gestor.getResultadoPartida());
         assertEquals(GestorPartida.EstadoPartida.TERMINADA, gestor.getEstadoActual());
+    }
+
+    @Test
+    void deberiaCalcularTiempoRestanteCorrectamente() throws InterruptedException {
+        // Given (Dado)
+        Jugador j1 = new Jugador("P1", TableroGato.TipoFicha.X);
+        Jugador j2 = new Jugador("P2", TableroGato.TipoFicha.O);
+        
+        // Iniciamos partida con 2 segundos por turno
+        gestor.unirJugador(j1, 2); 
+        gestor.unirJugador(j2, null);
+        
+        // When & Then (Cuando y Entonces)
+        
+        // Esperamos ~1 segundo (1000ms)
+        Thread.sleep(1100); 
+        Integer tiempoRestante = gestor.obtenerTiempoRestante();
+        
+        // Debería quedar 1 segundo restante (2 - 1 = 1)
+        assertEquals(1, tiempoRestante);
+        
+        // Esperamos otros 1.5 segundos (ya habrán pasado ~2.6s en total)
+        Thread.sleep(1500);
+        Integer tiempoAgotado = gestor.obtenerTiempoRestante();
+        
+        // Debería estancarse en 0 y no devolver números negativos
+        assertEquals(0, tiempoAgotado);
     }
 }
