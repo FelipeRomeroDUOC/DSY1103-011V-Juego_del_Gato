@@ -23,15 +23,27 @@ public class GestorPartida {
 
     private List<Jugador> jugadores = new ArrayList<>();
 
-    public boolean unirJugador(Jugador nuevoJugador, Integer limiteTiempo){
+    public enum TipoPartida{
+        CON_TIEMPO, SIN_TIEMPO
+    }
+    private TipoPartida tipoPartidaActual = TipoPartida.SIN_TIEMPO;
+
+    public enum EstadoPartida{
+        ESPERANDO, EN_PROGRESO, TERMINADA
+    }
+    private EstadoPartida estadoActual = EstadoPartida.ESPERANDO;
+
+    public boolean unirJugador(String nombreJugador, Integer limiteTiempo){
         if (this.estadoActual == EstadoPartida.ESPERANDO) {
             if (jugadores.isEmpty()){
+                Jugador nuevoJugador = new Jugador(nombreJugador, TableroGato.TipoFicha.X);
                 jugadores.add(nuevoJugador);
                 this.tiempoCreacion = LocalDateTime.now();
                 this.segundosPorTurno = limiteTiempo;
                 return true;
             }
             if(jugadores.size() == 1){
+                Jugador nuevoJugador = new Jugador(nombreJugador, TableroGato.TipoFicha.O);
                 jugadores.add(nuevoJugador);
                 if (this.segundosPorTurno == null){
                     iniciarPartida(TipoPartida.SIN_TIEMPO);
@@ -44,15 +56,6 @@ public class GestorPartida {
         return false;
     }
 
-    public enum TipoPartida{
-        CON_TIEMPO, SIN_TIEMPO
-    }
-    private TipoPartida tipoPartidaActual = TipoPartida.SIN_TIEMPO;
-
-    public enum EstadoPartida{
-        ESPERANDO, EN_PROGRESO, TERMINADA
-    }
-    private EstadoPartida estadoActual = EstadoPartida.ESPERANDO;
 
     public enum ResultadoPartida{
         X, O, EMPATE, TIMEOUT

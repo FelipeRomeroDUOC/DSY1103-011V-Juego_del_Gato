@@ -30,8 +30,8 @@ class GestorPartidaTest {
     @Test
     void deberiaCambiarTurnoDespuesDeJugadaValida() {
         // Given (Dado)
-        gestor.unirJugador(new Jugador("P1", TableroGato.TipoFicha.X), null);
-        gestor.unirJugador(new Jugador("P2", TableroGato.TipoFicha.O), null); // La partida pasa a EN_PROGRESO
+        gestor.unirJugador("P1", null);
+        gestor.unirJugador("P2", null); // La partida pasa a EN_PROGRESO
         TableroGato.Casilla casilla = TableroGato.Casilla.C1;
         TableroGato.TipoFicha fichaJugada = TableroGato.TipoFicha.X;
 
@@ -48,8 +48,8 @@ class GestorPartidaTest {
     @Test
     void noDeberiaPermitirJugarFueraDeTurno() {
         // Given (Dado)
-        gestor.unirJugador(new Jugador("P1", TableroGato.TipoFicha.X), null);
-        gestor.unirJugador(new Jugador("P2", TableroGato.TipoFicha.O), null); // La partida pasa a EN_PROGRESO
+        gestor.unirJugador("P1", null);
+        gestor.unirJugador("P2", null); // La partida pasa a EN_PROGRESO
         // El turno inicial es de X, pero intentaremos mandar una jugada de O
         TableroGato.Casilla casilla = TableroGato.Casilla.C1;
         TableroGato.TipoFicha fichaIncorrecta = TableroGato.TipoFicha.O; 
@@ -67,8 +67,8 @@ class GestorPartidaTest {
     @Test
     void noDeberiaCambiarTurnoSiCasillaEstaOcupada() {
         // Given (Dado)
-        gestor.unirJugador(new Jugador("P1", TableroGato.TipoFicha.X), null);
-        gestor.unirJugador(new Jugador("P2", TableroGato.TipoFicha.O), null); // La partida pasa a EN_PROGRESO
+        gestor.unirJugador("P1", null);
+        gestor.unirJugador("P2", null); // La partida pasa a EN_PROGRESO
         gestor.recibirJugada(TableroGato.Casilla.C1, TableroGato.TipoFicha.X); // X juega en la 1 (El turno pasa a O)
 
         // When (Cuando)
@@ -86,18 +86,15 @@ class GestorPartidaTest {
     @Test
     void deberiaPermitirUnirseMaximoDosJugadores() {
         // Given (Dado)
-        Jugador j1 = new Jugador("P1", TableroGato.TipoFicha.X);
-        Jugador j2 = new Jugador("P2", TableroGato.TipoFicha.O);
-        Jugador j3 = new Jugador("P3", TableroGato.TipoFicha.X);
 
         // When (Cuando)
-        boolean entroJ1 = gestor.unirJugador(j1, null);
+        boolean entroJ1 = gestor.unirJugador("P1", null);
         GestorPartida.EstadoPartida estadoDespuesJ1 = gestor.getEstadoActual();
         
-        boolean entroJ2 = gestor.unirJugador(j2, null);
+        boolean entroJ2 = gestor.unirJugador("P2", null);
         GestorPartida.EstadoPartida estadoDespuesJ2 = gestor.getEstadoActual();
 
-        boolean entroJ3 = gestor.unirJugador(j3, null);
+        boolean entroJ3 = gestor.unirJugador("P3", null);
 
         // Then (Entonces)
         assertTrue(entroJ1);
@@ -112,11 +109,8 @@ class GestorPartidaTest {
     @Test
     void deberiaDeclararTimeoutSiJugadaSeTardaDemasiado() throws InterruptedException {
         // Given (Dado)
-        Jugador j1 = new Jugador("P1", TableroGato.TipoFicha.X);
-        Jugador j2 = new Jugador("P2", TableroGato.TipoFicha.O);
-        
-        gestor.unirJugador(j1, 1); // 1 segundo por turno (CON_TIEMPO)
-        gestor.unirJugador(j2, null);
+        gestor.unirJugador("P1", 1); // 1 segundo por turno (CON_TIEMPO)
+        gestor.unirJugador("P2", null);
         
         // When (Cuando)
         Thread.sleep(2100); // Esperamos 2.1 segundos (para que Duration.getSeconds() retorne 2)
@@ -131,10 +125,8 @@ class GestorPartidaTest {
     @Test
     void deberiaGuardarElResultadoAlTerminar() {
         // Given (Dado)
-        Jugador j1 = new Jugador("P1", TableroGato.TipoFicha.X);
-        Jugador j2 = new Jugador("P2", TableroGato.TipoFicha.O);
-        gestor.unirJugador(j1, null); // SIN_TIEMPO
-        gestor.unirJugador(j2, null);
+        gestor.unirJugador("P1", null); // SIN_TIEMPO
+        gestor.unirJugador("P2", null);
 
         // When (Cuando)
         gestor.recibirJugada(TableroGato.Casilla.C1, TableroGato.TipoFicha.X);
@@ -151,11 +143,8 @@ class GestorPartidaTest {
     @Test
     void deberiaAplicarTimeoutPasivamenteSiNadieJuega() throws InterruptedException {
         // Given (Dado)
-        Jugador j1 = new Jugador("P1", TableroGato.TipoFicha.X);
-        Jugador j2 = new Jugador("P2", TableroGato.TipoFicha.O);
-        
-        gestor.unirJugador(j1, 1); // 1 segundo por turno (CON_TIEMPO)
-        gestor.unirJugador(j2, null);
+        gestor.unirJugador("P1", 1); // 1 segundo por turno (CON_TIEMPO)
+        gestor.unirJugador("P2", null);
         
         // When (Cuando)
         Thread.sleep(2100); // Esperamos a que pase el tiempo
@@ -171,12 +160,9 @@ class GestorPartidaTest {
     @Test
     void deberiaCalcularTiempoRestanteCorrectamente() throws InterruptedException {
         // Given (Dado)
-        Jugador j1 = new Jugador("P1", TableroGato.TipoFicha.X);
-        Jugador j2 = new Jugador("P2", TableroGato.TipoFicha.O);
-        
         // Iniciamos partida con 2 segundos por turno
-        gestor.unirJugador(j1, 2); 
-        gestor.unirJugador(j2, null);
+        gestor.unirJugador("P1", 2); 
+        gestor.unirJugador("P2", null);
         
         // When & Then (Cuando y Entonces)
         
@@ -198,10 +184,8 @@ class GestorPartidaTest {
     @Test
     void noDeberiaPermitirJugadaSiPartidaTermino() {
         // Given (Dado)
-        Jugador j1 = new Jugador("P1", TableroGato.TipoFicha.X);
-        Jugador j2 = new Jugador("P2", TableroGato.TipoFicha.O);
-        gestor.unirJugador(j1, null);
-        gestor.unirJugador(j2, null);
+        gestor.unirJugador("P1", null);
+        gestor.unirJugador("P2", null);
         gestor.terminarPartida(GestorPartida.ResultadoPartida.EMPATE);
 
         // When (Cuando)
@@ -216,14 +200,11 @@ class GestorPartidaTest {
     @Test
     void noDeberiaPermitirUnirseSiPartidaEmpezo() {
         // Given (Dado)
-        Jugador j1 = new Jugador("P1", TableroGato.TipoFicha.X);
-        Jugador j2 = new Jugador("P2", TableroGato.TipoFicha.O);
-        gestor.unirJugador(j1, null);
-        gestor.unirJugador(j2, null); // La partida pasa a EN_PROGRESO
+        gestor.unirJugador("P1", null);
+        gestor.unirJugador("P2", null); // La partida pasa a EN_PROGRESO
 
         // When (Cuando)
-        Jugador j3 = new Jugador("P3", TableroGato.TipoFicha.X);
-        boolean entroJ3 = gestor.unirJugador(j3, null);
+        boolean entroJ3 = gestor.unirJugador("P3", null);
 
         // Then (Entonces)
         assertFalse(entroJ3);
@@ -233,10 +214,8 @@ class GestorPartidaTest {
     @Test
     void deberiaDeclararEmpate() {
         // Given (Dado)
-        Jugador j1 = new Jugador("P1", TableroGato.TipoFicha.X);
-        Jugador j2 = new Jugador("P2", TableroGato.TipoFicha.O);
-        gestor.unirJugador(j1, null);
-        gestor.unirJugador(j2, null);
+        gestor.unirJugador("P1", null);
+        gestor.unirJugador("P2", null);
 
         // When (Cuando)
         gestor.recibirJugada(TableroGato.Casilla.C1, TableroGato.TipoFicha.X);
