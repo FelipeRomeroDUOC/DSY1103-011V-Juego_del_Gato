@@ -33,10 +33,9 @@ class GestorPartidaTest {
         gestor.unirJugador("P1", null);
         gestor.unirJugador("P2", null); // La partida pasa a EN_PROGRESO
         TableroGato.Casilla casilla = TableroGato.Casilla.C1;
-        TableroGato.TipoFicha fichaJugada = TableroGato.TipoFicha.X;
 
         // When (Cuando)
-        gestor.recibirJugada(casilla, fichaJugada);
+        gestor.recibirJugada("P1", casilla);
         TableroGato.TipoFicha turnoSiguiente = gestor.getFichaActual();
         TableroGato.TipoFicha estadoCasilla = gestor.getTableroPartida().getTablero().get(casilla);
 
@@ -50,12 +49,11 @@ class GestorPartidaTest {
         // Given (Dado)
         gestor.unirJugador("P1", null);
         gestor.unirJugador("P2", null); // La partida pasa a EN_PROGRESO
-        // El turno inicial es de X, pero intentaremos mandar una jugada de O
+        // El turno inicial es de X, pero P2 (que tiene O) intenta jugar primero
         TableroGato.Casilla casilla = TableroGato.Casilla.C1;
-        TableroGato.TipoFicha fichaIncorrecta = TableroGato.TipoFicha.O; 
 
         // When (Cuando)
-        gestor.recibirJugada(casilla, fichaIncorrecta);
+        gestor.recibirJugada("P2", casilla);
         TableroGato.TipoFicha turnoActual = gestor.getFichaActual();
         TableroGato.TipoFicha estadoCasilla = gestor.getTableroPartida().getTablero().get(casilla);
 
@@ -69,11 +67,11 @@ class GestorPartidaTest {
         // Given (Dado)
         gestor.unirJugador("P1", null);
         gestor.unirJugador("P2", null); // La partida pasa a EN_PROGRESO
-        gestor.recibirJugada(TableroGato.Casilla.C1, TableroGato.TipoFicha.X); // X juega en la 1 (El turno pasa a O)
+        gestor.recibirJugada("P1", TableroGato.Casilla.C1); // X juega en la 1 (El turno pasa a O)
 
         // When (Cuando)
         // O intenta robar la casilla 1 que ya está ocupada
-        gestor.recibirJugada(TableroGato.Casilla.C1, TableroGato.TipoFicha.O);
+        gestor.recibirJugada("P2", TableroGato.Casilla.C1);
         
         TableroGato.TipoFicha turnoActual = gestor.getFichaActual();
         TableroGato.TipoFicha estadoCasilla = gestor.getTableroPartida().getTablero().get(TableroGato.Casilla.C1);
@@ -114,7 +112,7 @@ class GestorPartidaTest {
         
         // When (Cuando)
         Thread.sleep(2100); // Esperamos 2.1 segundos (para que Duration.getSeconds() retorne 2)
-        gestor.recibirJugada(TableroGato.Casilla.C1, TableroGato.TipoFicha.X);
+        gestor.recibirJugada("P1", TableroGato.Casilla.C1);
         
         // Then (Entonces)
         assertEquals(GestorPartida.ResultadoPartida.TIMEOUT, gestor.getResultadoPartida());
@@ -129,11 +127,11 @@ class GestorPartidaTest {
         gestor.unirJugador("P2", null);
 
         // When (Cuando)
-        gestor.recibirJugada(TableroGato.Casilla.C1, TableroGato.TipoFicha.X);
-        gestor.recibirJugada(TableroGato.Casilla.C4, TableroGato.TipoFicha.O);
-        gestor.recibirJugada(TableroGato.Casilla.C2, TableroGato.TipoFicha.X);
-        gestor.recibirJugada(TableroGato.Casilla.C5, TableroGato.TipoFicha.O);
-        gestor.recibirJugada(TableroGato.Casilla.C3, TableroGato.TipoFicha.X); // X hace 3 en línea (1, 2, 3)
+        gestor.recibirJugada("P1", TableroGato.Casilla.C1);
+        gestor.recibirJugada("P2", TableroGato.Casilla.C4);
+        gestor.recibirJugada("P1", TableroGato.Casilla.C2);
+        gestor.recibirJugada("P2", TableroGato.Casilla.C5);
+        gestor.recibirJugada("P1", TableroGato.Casilla.C3); // X hace 3 en línea (1, 2, 3)
 
         // Then (Entonces)
         assertEquals(GestorPartida.ResultadoPartida.X, gestor.getResultadoPartida());
@@ -189,7 +187,7 @@ class GestorPartidaTest {
         gestor.terminarPartida(GestorPartida.ResultadoPartida.EMPATE);
 
         // When (Cuando)
-        gestor.recibirJugada(TableroGato.Casilla.C1, TableroGato.TipoFicha.X);
+        gestor.recibirJugada("P1", TableroGato.Casilla.C1);
         TableroGato.TipoFicha estadoCasilla = gestor.getTableroPartida().getTablero().get(TableroGato.Casilla.C1);
 
         // Then (Entonces)
@@ -218,15 +216,15 @@ class GestorPartidaTest {
         gestor.unirJugador("P2", null);
 
         // When (Cuando)
-        gestor.recibirJugada(TableroGato.Casilla.C1, TableroGato.TipoFicha.X);
-        gestor.recibirJugada(TableroGato.Casilla.C2, TableroGato.TipoFicha.O);
-        gestor.recibirJugada(TableroGato.Casilla.C3, TableroGato.TipoFicha.X);
-        gestor.recibirJugada(TableroGato.Casilla.C4, TableroGato.TipoFicha.O);
-        gestor.recibirJugada(TableroGato.Casilla.C6, TableroGato.TipoFicha.X);
-        gestor.recibirJugada(TableroGato.Casilla.C5, TableroGato.TipoFicha.O);
-        gestor.recibirJugada(TableroGato.Casilla.C7, TableroGato.TipoFicha.X);
-        gestor.recibirJugada(TableroGato.Casilla.C9, TableroGato.TipoFicha.O);
-        gestor.recibirJugada(TableroGato.Casilla.C8, TableroGato.TipoFicha.X); // Última jugada que llena el tablero y no da victoria a nadie
+        gestor.recibirJugada("P1", TableroGato.Casilla.C1);
+        gestor.recibirJugada("P2", TableroGato.Casilla.C2);
+        gestor.recibirJugada("P1", TableroGato.Casilla.C3);
+        gestor.recibirJugada("P2", TableroGato.Casilla.C4);
+        gestor.recibirJugada("P1", TableroGato.Casilla.C6);
+        gestor.recibirJugada("P2", TableroGato.Casilla.C5);
+        gestor.recibirJugada("P1", TableroGato.Casilla.C7);
+        gestor.recibirJugada("P2", TableroGato.Casilla.C9);
+        gestor.recibirJugada("P1", TableroGato.Casilla.C8); // Última jugada que llena el tablero y no da victoria a nadie
 
         // Then (Entonces)
         assertEquals(GestorPartida.ResultadoPartida.EMPATE, gestor.getResultadoPartida());

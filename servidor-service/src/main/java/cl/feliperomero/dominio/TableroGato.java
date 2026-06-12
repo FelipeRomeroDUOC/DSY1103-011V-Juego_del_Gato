@@ -1,12 +1,10 @@
 package cl.feliperomero.dominio;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import java.util.Map;
 import java.util.HashMap;
 
 @Getter
-@AllArgsConstructor
 public class TableroGato {
     
     public enum TipoFicha {

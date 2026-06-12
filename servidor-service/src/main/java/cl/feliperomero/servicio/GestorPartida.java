@@ -111,11 +111,16 @@ public class GestorPartida {
         return this.tiempoRestante;
     }
 
-    private boolean verificarTurno(TableroGato.TipoFicha fichaRecibida){
-        if (fichaRecibida == fichaActual){
-            return true;
+    private boolean verificarTurno(String nombre){
+        for(Jugador jugador : jugadores){
+            if(nombre.equals(jugador.getNombre())){
+                if (this.fichaActual == jugador.getFicha()){
+                    return true;
+                }
+                return false;
+            }
         }
-        return false;
+        return false;   
     }
 
     private TableroGato.TipoFicha cambiarTurno(TableroGato.TipoFicha ficha){
@@ -128,17 +133,17 @@ public class GestorPartida {
         return ficha;
     }
     
-    public void recibirJugada(TableroGato.Casilla casilla, TableroGato.TipoFicha ficha){
+    public boolean recibirJugada(String nombre, TableroGato.Casilla casilla){
 
         this.revisarYAplicarTimeout();
         
         if (this.estadoActual != EstadoPartida.EN_PROGRESO){
-            return;
+            return false;
         }
 
-        if (verificarTurno(ficha)){
+        if (verificarTurno(nombre)){
 
-            boolean jugadaExitosa = tableroPartida.ponerFicha(casilla, ficha);
+            boolean jugadaExitosa = tableroPartida.ponerFicha(casilla, this.fichaActual);
 
             if (jugadaExitosa){
 
@@ -159,7 +164,9 @@ public class GestorPartida {
                     this.fichaActual = cambiarTurno(this.fichaActual);
                     this.tiempoUltimaJugada = LocalDateTime.now();
                 }
+                return true;
             }
         }
+        return false;
     }
 }

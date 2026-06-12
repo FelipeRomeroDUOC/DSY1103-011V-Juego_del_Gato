@@ -35,4 +35,21 @@ public class ControladorServidor {
             return ResponseEntity.badRequest().body("Partida llena o en curso.");
         }
     }
+
+    @PostMapping("/jugada")
+    public ResponseEntity<?> hacerJugada(@Valid @RequestBody JugadaRequestDto request){
+
+        TableroGato.Casilla casillaEnum = TableroGato.Casilla.valueOf("C" + request.casilla());
+        
+        boolean jugadaExitosa = gestorPartida.recibirJugada(request.nombre(), casillaEnum);
+
+        if (jugadaExitosa) {
+            return ResponseEntity.ok("Jugada exitosa.");
+        }else{
+            return ResponseEntity.badRequest().body("Jugada invalida.");
+        }
+        
+
+    }
+
 }
